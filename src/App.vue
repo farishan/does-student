@@ -383,7 +383,7 @@
       display: inline-block;
     }
     .nav {
-      position: static;
+      position: absolute;
       height: 0;
       width: 0;
       display: inline;

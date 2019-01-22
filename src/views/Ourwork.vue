@@ -4,11 +4,11 @@
 			<a @click="$router.go(-1)"><img id="backImg" src="../assets/logo/back.png"></a>
 		</div>
 		<div class="head">
-		  <h1>OUR WORKS</h1>
-		  <hr>
+			<h1>OUR WORKS</h1>
+			<hr>
 		</div>
 		<div class="ourwork-desc">
-			<div class="work" v-for="work in data">
+			<div class="work" v-for="(work, key) in data" :key="key">
 				<img v-bind:src="work.file">
 				<h2>{{work.data.category}}</h2>
 				<p>{{work.data.title}}</p>

@@ -4,13 +4,13 @@
 			<a @click="$router.go(-1)"><img id="backImg" src="../assets/logo/back.png"></a>
 		</div>
 		<div class="head">
-		  <h1>FOUNDER</h1>
-		  <hr>
+			<h1>FOUNDER</h1>
+			<hr>
 		</div>
-		<img v-bind:src="image">
+		<img v-bind:src="image" class="my-3">
 		<div class="wrapper">
 			<div class="founder-desc">
-				<p v-for="a in founder">{{a.description}}</p>
+				<p v-for="(a, key) in founder" :key="key">{{a.description}}</p>
 			</div>
 		</div>
 	</div>
@@ -29,7 +29,6 @@
 			}
 		},
 		mounted(){
-			var self = this
 			this.founder = router.app.founder
 
 			this.founder.map(data=>{
@@ -46,6 +45,9 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+.my-3 {
+	margin: 1rem 0;
 }
 .founder {
 	text-align: center;

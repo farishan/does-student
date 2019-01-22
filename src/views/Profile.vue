@@ -4,19 +4,19 @@
 			<a @click="$router.go(-1)"><img id="backImg" src="../assets/logo/back.png"></a>
 		</div>
 		<div class="head">
-		  <h1>PROFILE</h1>
-		  <hr>
+			<h1>PROFILE</h1>
+			<hr>
 		</div>
-	    <div class="a-desc">
-	      <div class="foto">
-	        <img>
-	      </div>
-	      <div class="status" id="status">
-	        <p><strong>{{selectedStudent.name}}</strong></p>
-	        <hr>
-	        <p>{{selectedStudent.major | majorToName}}</p>
-	      </div>
-	    </div>
+		<div class="a-desc">
+			<div class="foto">
+				<img>
+			</div>
+			<div class="status" id="status">
+				<p><strong>{{selectedStudent.name}}</strong></p>
+				<hr>
+				<p>{{selectedStudent.major | majorToName}}</p>
+			</div>
+		</div>
 		<div class="profile-desc">
 			<div class="bio">
 				<h2><span>Gender</span>: <p>{{selectedStudent.gender}}</p></h2>
@@ -31,11 +31,11 @@
 					<h1>SKILL</h1>
 					<div class="list-skill">
 							<ul >
-								<li v-for="skill in profileSkill.skills">{{skill.name}}</li>
+								<li v-for="skill in profileSkill.skills" :key="skill.name">{{skill.name}}</li>
 							</ul>
 					</div>
 					<div class="listPersentSkill">
-						<div class="persent" v-for="skil in profileSkill.skills">
+						<div class="persent" v-for="(skil, key) in profileSkill.skills" :key="key">
 							<progress v-bind:value="skil.score" max="10"></progress>
 						</div>
 					</div>
@@ -44,11 +44,11 @@
 					<h1>CHARACTER</h1>
 					<div class="character-list">
 						<ul>
-							<li v-for="char in profileCharacter.character">{{char.name}}</li>
+							<li v-for="(char, key) in profileCharacter.character" :key="key">{{char.name}}</li>
 						</ul>
 					</div>
 					<div class="listPersentCharacter">
-						<div class="persent-char" v-for="character in profileCharacter.character">
+						<div class="persent-char" v-for="(character, key) in profileCharacter.character" :key="key">
 							<progress v-bind:value="character.score" max="10"></progress>
 						</div>
 					</div>
@@ -58,21 +58,21 @@
 		<hr>		
 		<div class="slide-profile">
 			<div class="slider-container">
-	            <Carousel :perPageCustom="[[300, 1],[480, 1],[640, 1],[730, 2], [732, 1], [768, 2], [1024, 3], [1366, 2], [1367, 3], [1920, 3], [1080, 1]]" :navigationEnabled="true" :mouseDrag="true" paginationActiveColor="#c41e30" :paginationPadding='0'>
-	              <Slide v-for="student in selectedSlide">
-	                  <div class="a-desc-profile" v-on:click="selectStudent(student)">
-	                    <div class="foto-profile">
-	                      <img>
-	                    </div>
-	                    <div class="status-profile">
-	                      <p><strong>{{student.name}}</strong></p>
-	                      <hr>
-	                      <p>{{student.major| majorToName}}</p>
-	                    </div>
-	                  </div>
-	              </Slide>
-	            </Carousel>
-          </div>
+				<Carousel :perPageCustom="[[300, 1],[480, 1],[640, 1],[730, 2], [732, 1], [768, 2], [1024, 3], [1366, 2], [1367, 3], [1920, 3], [1080, 1]]" :navigationEnabled="true" :mouseDrag="true" paginationActiveColor="#c41e30" :paginationPadding='0'>
+					<Slide v-for="(student, key) in selectedSlide" :key="key">
+						<div class="a-desc-profile" v-on:click="selectStudent(student)">
+							<div class="foto-profile">
+								<img>
+							</div>
+							<div class="status-profile">
+								<p><strong>{{student.name}}</strong></p>
+								<hr>
+								<p>{{student.major| majorToName}}</p>
+							</div>
+						</div>
+					</Slide>
+				</Carousel>
+			</div>
 		</div>
 	</div>
 </template>
@@ -87,77 +87,75 @@
 	Vue.use(VueAxios, axios)
 
   export default {
-    name: 'profile',
-    components: {
-    	Carousel,
-    	Slide
-    },
+	name: 'profile',
+	components: {
+		Carousel,
+		Slide
+	},
 
-    data () {
-      return {
-      	selectedSlide: null,
-      	selectedStudent:null,
-      	id_stud: null,
-      	url: App.data().url,
-      	profileSkill: null,
-      	profileCharacter: null,
-      }
-    },
-    mounted() {
-    	var self = this;
+	data () {
+		return {
+			selectedSlide: null,
+			selectedStudent:null,
+			id_stud: null,
+			url: App.data().url,
+			profileSkill: null,
+			profileCharacter: null,
+		}
+	},
+	mounted() {
+		this.selectedStudent = this.$route.params.selected_student;
+		this.id_stud = this.selectedStudent.id; 
 
-    	this.selectedStudent = this.$route.params.selected_student;
-    	this.id_stud = this.selectedStudent.id; 
+		// get skill student dgn id
 
-    	// get skill student dgn id
-
-    	Vue.axios.get(this.url.student + '/skill/' + this.id_stud).then((response)=>{
+		Vue.axios.get(this.url.student + '/skill/' + this.id_stud).then((response)=>{
 			this.profileSkill = response.data;
 			
 		})
 
-    	// get char student dgn id 
-    	Vue.axios.get(this.url.student + '/character/' + this.id_stud).then((response)=>{
+		// get char student dgn id 
+		Vue.axios.get(this.url.student + '/character/' + this.id_stud).then((response)=>{
 			this.profileCharacter = response.data;
 		})
 
-    	this.selectedSlide = this.$route.params.selected_slide; 
-    },
-    methods: {
-    	selectStudent(student){
-    		this.selectedStudent = student;
-    		this.id_stud = student.id
-    		Vue.axios.get(this.url.student + '/skill/' + this.id_stud).then((response)=>{
+		this.selectedSlide = this.$route.params.selected_slide; 
+	},
+	methods: {
+		selectStudent(student){
+			this.selectedStudent = student;
+			this.id_stud = student.id
+			Vue.axios.get(this.url.student + '/skill/' + this.id_stud).then((response)=>{
 				this.profileSkill = response.data;
 			
 			})
 
-    	// get char student dgn id 
-    		Vue.axios.get(this.url.student + '/character/' + this.id_stud).then((response)=>{
+		// get char student dgn id 
+			Vue.axios.get(this.url.student + '/character/' + this.id_stud).then((response)=>{
 				this.profileCharacter = response.data;
 			
 			})
 
-    		this.render();
-    	},
-    	render() {
-    		this.selectedSlide = this.$route.params.selected_slide; 
-    	}
-    },
+			this.render();
+		},
+		render() {
+			this.selectedSlide = this.$route.params.selected_slide; 
+		}
+	},
 
-    filters: {
+	filters: {
 
-      majorToName(val){
-        var name = []
-        router.app.major.map(data=>{
-          if(data.id === val){
-            name = data.name;
-          }
-        })
-        return name;
-      }
-    }
-  };
+		majorToName(val){
+			var name = []
+			router.app.major.map(data=>{
+				if(data.id === val){
+					name = data.name;
+				}
+			})
+			return name;
+		}
+	}
+};
 </script>
 
 <style scoped>
@@ -422,10 +420,10 @@ progress::-webkit-progress-value {
 /*tabled or ipad or dekstop*/
 @media all and (min-width: 768px) and (max-width: 1024px) {
 	.profile {
-    	width: 100%;
+		width: 100%;
 	}
 	.profile h1 {
-    	font-size: 35px;
+		font-size: 35px;
 	}
 	.profile-desc{
 		background: #fff;
@@ -534,27 +532,27 @@ progress::-webkit-progress-value {
 /*mobile landscape*/
 @media all and (min-width: 481px) and (max-width: 767px) {
 	.profile {
-    	width: 100%;
+		width: 100%;
 	}
 	.profile h1 {
-    	font-size: 20px;
+		font-size: 20px;
 	}
-  	.profile .a-desc {
-  		max-width: 100%;
-  		position: relative;
-  		align-items: center;
-  		margin: 10px 0;
-  		justify-content: center;
-  		z-index: -1;
+	.profile .a-desc {
+		max-width: 100%;
+		position: relative;
+		align-items: center;
+		margin: 10px 0;
+		justify-content: center;
+		z-index: -1;
 	}
 	.profile .a-desc .foto {
 		max-width: 100px;
-	    max-height: 100px;
-	    background-color: #fff;
-	    border-radius: 50%;
-	    border: 1px solid #ccc;
-	    display: inline-block;
-	    z-index: 1;
+		max-height: 100px;
+		background-color: #fff;
+		border-radius: 50%;
+		border: 1px solid #ccc;
+		display: inline-block;
+		z-index: 1;
 	}
 	.profile .a-desc .foto img{
 		max-width: 100px;
@@ -645,28 +643,28 @@ progress::-webkit-progress-value {
 /*mobile and down*/
 @media all and (max-width: 480px) {
 	.profile {
-    	width: 100%;
+		width: 100%;
 	}
 	.profile h1 {
-    	font-size: 20px;
+		font-size: 20px;
 	}
-  	.profile .a-desc {
-  		width: 100%;
-  		position: relative;
-  		align-items: center;
-  		margin: 10px 0;
-  		justify-content: center;
-  		height: 100px;
+	.profile .a-desc {
+		width: 100%;
+		position: relative;
+		align-items: center;
+		margin: 10px 0;
+		justify-content: center;
+		height: 100px;
 	}
 	.profile .a-desc .foto {
 		max-width: 80px;
-	    max-height: 80px;
-	    background-color: #fff;
-	    border-radius: 50%;
-	    border: 1px solid #ccc;
-	    display: inline-block;
-	    position: relative;
-	    right: 70px;
+		max-height: 80px;
+		background-color: #fff;
+		border-radius: 50%;
+		border: 1px solid #ccc;
+		display: inline-block;
+		position: relative;
+		right: 70px;
 	}
 	.profile .a-desc .foto img{
 		max-width: 80px;

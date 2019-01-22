@@ -20,7 +20,7 @@
             <div class="a" >
               <Carousel :perPage="1" :navigationEnabled="true" :mouseDrag="true" :paginationPadding='0' :paginationSize='9' paginationActiveColor="#c41e30">
                 <Slide 
-                  v-for="(student, key) in searchResult">
+                  v-for="(student, key) in searchResult" :key="key">
                     <router-link :to="{name:'profile', params: {selected_student: student, selected_slide: searchResult}}">
                       <div class="a-desc-search">
                         <div class="search-foto">
@@ -43,21 +43,23 @@
         <template v-else>
           <div class="noResult" v-if="isSearching">
             <div class="no-result">
-              <h1>No Result !!</h1>
+              <h1>No Result.</h1>
             </div>
             <button @click="isSearching=false">Close</button>
             <hr>
           </div>
         </template>
-          <template v-for="(group, key) in finaldata">
-            <div v-for="major in group.majors">
-              <div class="slider-container" :key="key" v-if="major.students.length > 0">
+        <!-- eslint-disable-next-line -->
+          <template v-for="(group, i) in finaldata">
+            <!-- eslint-disable-next-line -->
+            <div v-for="(major) in group.majors">
+              <div class="slider-container" v-if="major.students.length > 0">
                 <div class="slider-title" >
                   <h1>{{major.major_data.name}}/{{group.gen}}</h1>
                   <p>{{major.students.length}} Students</p>
                 </div>
                 <Carousel :perPageCustom="[[300, 1],[480, 1],[640, 1],[730, 2], [732, 1], [768, 2], [1024, 3], [1366, 2], [1367, 3], [1920, 3], [1080, 1]]" :navigationEnabled="true" :mouseDrag="true" paginationActiveColor="#c41e30" :paginationPadding='0'>
-                  <Slide v-for="student in major.students" >
+                  <Slide v-for="(student, keyyy) in major.students" :key="keyyy">
                     <router-link :to="{name:'profile', params: {selected_student: student, selected_slide: major.students}}">
                       <div class="a-desc">
                         <div class="foto">
@@ -106,8 +108,6 @@
       }
     },
     mounted() {
-      var self = this;
-
       // ---------------------------------------------------------------------
       // DATA BACKEND 
 
@@ -128,7 +128,7 @@
           
           var result = [];
           
-          this.databackend.map((student, i) => {
+          this.databackend.map((student) => {
             if(keyword == student.name.toLowerCase() || student.name.toLowerCase().indexOf(keyword) !== -1){
               result.push(student);
             }
@@ -161,48 +161,48 @@
         }
 
         // push students by major only (gen nya campur2)
-        for (var i = 0; i < students.length; i++) {
+        for (var ii = 0; ii < students.length; ii++) {
           for (var j = 0; j < resultByMajor.length; j++) {
-            if(students[i].major === resultByMajor[j].major_data.id){
-              resultByMajor[j].students.push(students[i]);
+            if(students[ii].major === resultByMajor[j].major_data.id){
+              resultByMajor[j].students.push(students[ii]);
             }
           }
         }
 
         // build result skeleton (students by major && students by gen masih kosong)
-        for (var i = 0; i < gens.length; i++) {
+        for (var iii = 0; iii < gens.length; iii++) {
 
           var _m = [];
 
-          for (var j = 0; j < majors.length; j++) {
+          for (var jj = 0; jj < majors.length; jj++) {
             _m.push({
-             major_data: majors[j],
+             major_data: majors[jj],
              students: [] 
             });
           }
 
           result.push({
-            gen: gens[i],
+            gen: gens[iii],
             majors: _m,
             students: []
           });
         }
 
         // push students by major
-        for (var i = 0; i < students.length; i++) {
-          for (var j = 0; j < result.length; j++) {
+        for (var iiii = 0; iiii < students.length; iiii++) {
+          for (var jjj = 0; jjj < result.length; jjj++) {
 
             // by gen dulu
-            if(students[i].generations === result[j].gen){
+            if(students[iiii].generations === result[jjj].gen){
               // push by gen
-              result[j].students.push(students[i]);
+              result[jjj].students.push(students[iiii]);
 
               // loop by major di setiap generasinya
-              for (var k = 0; k < result[j].majors.length; k++) {
+              for (var k = 0; k < result[jjj].majors.length; k++) {
                 // lanjut by major
-                if(students[i].major === result[j].majors[k].major_data.id){
+                if(students[iiii].major === result[jjj].majors[k].major_data.id){
                   // push by major
-                  result[j].majors[k].students.push(students[i])
+                  result[jjj].majors[k].students.push(students[iiii])
                 }
               }
             }
@@ -210,7 +210,7 @@
         }
 
 
-        this.checkStudents(result, resultByMajor);
+        // this.checkStudents(result, resultByMajor);
         return result
         // return resultByMajor
       },
@@ -219,24 +219,25 @@
       // JUMLAH GEN
       gen(generasi){
         var filtered = [];
-
-        generasi.map((stud, i)=>{
-          var gen = false;
-          if(filtered.length == 0){
-            gen = false;
-          }else {
-            filtered.map(a=>{
-              if(stud.generations != a || i == 0){
-                gen = false;
-              }else{
-                gen = true;
-              }
-            });
-          }
-          if(gen == false){
-            filtered.push(stud.generations)
-          }
-        });
+        if(generasi){
+          generasi.map((stud, i)=>{
+            var gen = false;
+            if(filtered.length == 0){
+              gen = false;
+            }else {
+              filtered.map(a=>{
+                if(stud.generations != a || i == 0){
+                  gen = false;
+                }else{
+                  gen = true;
+                }
+              });
+            }
+            if(gen == false){
+              filtered.push(stud.generations)
+            }
+          });
+        }
         return filtered;
       },
 
@@ -265,20 +266,19 @@
         return listgen
       },
 
-      checkStudents(result, resultByMajor){
-        for (var i = 0; i < result.length; i++) {
-          var r = result[i];
-          for (var j = 0; j < r.majors.length; j++) {
-            if(r.majors[j].students.length !== 0){
-            }else{
-            }
-          }
-        }
+      // checkStudents(result, resultByMajor){
+      //   for (let i = 0; i < result.length; i++) {
+      //     var r = result[i];
+      //     for (var j = 0; j < r.majors.length; j++) {
+      //       if(r.majors[j].students.length !== 0){
+      //       }
+      //     }
+      //   }
 
-        for (var i = 0; i < resultByMajor.length; i++) {
-          var r = resultByMajor[i];
-        }
-      },
+      //   for (let i = 0; i < resultByMajor.length; i++) {
+      //     var rr = resultByMajor[i];
+      //   }
+      // },
 
     },
     filters: {

@@ -10,6 +10,7 @@ var data = {
 	about: null,
 	major:null,
 	work: null,
+	founder: null,
 }
 
 
@@ -18,7 +19,7 @@ Vue.use(VueAxios, axios)
 
 
 window.onload = (function(){
-	// getStudent()
+	getStudent()
 	render()
 })();
 
@@ -60,10 +61,10 @@ function getWork() {
 
 function render() {
 	new Vue({
-	  router,
-	  data: function(){
-	  	return data;
-	  },
-	  render: h => h(App)
+		router,
+		data: function(){
+			return data;
+		},
+		render: h => h(App)
 	}).$mount('#app')
 }

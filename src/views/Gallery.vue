@@ -4,12 +4,12 @@
 			<a @click="$router.go(-1)"><img id="backImg" src="../assets/logo/back.png"></a>
 		</div>
 		<div class="head">
-		  <h1>GALLERY</h1>
-		  <hr>
+			<h1>GALLERY</h1>
+			<hr>
 		</div>
 		<div class="gallery-desc">
 			<div class="images-list">
-				<div class="a"  v-for="img in images">
+				<div class="a"  v-for="(img, key) in images" :key="key">
 					<img :src="img.file" @click="detail">
 					{{img.file}}
 				</div>
@@ -34,14 +34,11 @@
 		},
 		mounted() {
 			this.images = router.app.gallery
-			console.log('this. imges', this.images)
 		},
 		methods: {
 			detail() {
-
 				var target = event.target.src;
 
-				console.log(target)
 				var pict = document.getElementById("itemPict");
 				pict.src = target;
 
@@ -51,7 +48,7 @@
 			},
 			closePage(){
 				var modal = document.getElementById('myModal');
-				var span = document.getElementsByClassName("close")[0];
+				// var span = document.getElementsByClassName("close")[0];
 
 				modal.style.display = "none";
 			}

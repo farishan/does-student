@@ -4,13 +4,13 @@
 			<a @click="$router.go(-1)"><img id="backImg" src="../assets/logo/back.png"></a>
 		</div>
 		<div class="head">
-		  <h1>ABOUT</h1>
-		  <hr>
+			<h1>ABOUT</h1>
+			<hr>
 		</div>
 		<img id="img-about" v-bind:src="image">
 		<div class="wrapper">
 			<div class="about-desc">
-				<p v-for="a in about ">{{ a.description}}</p>
+				<p v-for="(a, key) in about" :key="key">{{ a.description}}</p>
 			</div>
 		</div>
 	</div>
@@ -35,13 +35,13 @@
 			}
 		},
 		mounted(){
-			var self = this;
-
 			this.about = router.app.about
 			
-			this.about.map(data=>{
-				this.a = data.file
-			})
+			if(this.about != null){
+				this.about.map(data=>{
+					this.a = data.file
+				})
+			}
 
 			const url=  'http://192.168.2.231:8000/'
 			this.image = url + this.a
@@ -90,6 +90,10 @@
 	letter-spacing: 1px;
 	
 }
+#img-about {
+	margin: 1rem 0;
+}
+
 /*tablet*/
 @media all and (min-width: 768px) and (max-width: 1024px) {
 	.about {
